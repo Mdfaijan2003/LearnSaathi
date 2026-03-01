@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+body {
+  background: radial-gradient(circle at 20% 10%,
+      rgba(255, 115, 0, 0.25),
+      transparent 40%),
+    radial-gradient(circle at 80% 30%,
+      rgba(168, 85, 247, 0.2),
+      transparent 40%),
+    #0b1220;
+
+  min-height: 100vh;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Hide scrollbar for Chrome, Safari */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge */
+.no-scrollbar {
+  -ms-overflow-style: none;
+}
+
+/* Hide scrollbar for Firefox */
+.no-scrollbar {
+  scrollbar-width: none;
+}
