@@ -126,9 +126,9 @@ export default function ContinueLearning() {
   }, []);
 
   return (
-    <div className="glass-card  w-[800px] p-4">
+    <div className="glass-card w-full p-3 sm:p-4">
       <div
-        className="w-full max-w-[750px]"
+        className="w-full"
         style={{
           opacity: visible ? 1 : 0,
           transform: visible ? "translateY(0)" : "translateY(16px)",
@@ -137,7 +137,7 @@ export default function ContinueLearning() {
       >
         {/* Section title */}
         <h2
-          className="text-white text-xl font-extrabold tracking-tight px-2 py-4"
+          className="text-white text-lg sm:text-xl font-extrabold tracking-tighter px-1 sm:px-2 py-3 sm:py-4"
           style={{
             opacity: visible ? 1 : 0,
             transform: visible ? "translateX(0)" : "translateX(-12px)",
@@ -148,7 +148,7 @@ export default function ContinueLearning() {
         </h2>
 
         {/* 2x2 grid */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {subjects.map((item) => (
             <SubjectCard key={item.id} item={item} visible={visible} />
           ))}

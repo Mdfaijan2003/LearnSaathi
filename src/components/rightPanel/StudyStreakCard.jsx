@@ -46,7 +46,7 @@ export default function StudyStreak() {
   return (
     <div >
       <div
-        className="relative rounded-2xl overflow-hidden flex flex-col items-center px-8 pt-8 pb-7 w-[360px] hover:shadow-[0_0_0_1px_rgba(255,140,0,0.08),_0_20px_60px_rgba(0,0,0,0.55)] transition-shadow duration-300 ease-out"
+        className="relative rounded-2xl overflow-hidden flex flex-col items-center px-5 sm:px-8 pt-6 sm:pt-8 pb-6 sm:pb-7 w-full hover:shadow-[0_0_0_1px_rgba(255,140,0,0.08),_0_20px_60px_rgba(0,0,0,0.55)] transition-shadow duration-300 ease-out cursor-pointer"
         style={{
           background: "linear-gradient(160deg, #1e1b18 0%, #1a1714 100%)",
           border: "1px solid rgba(255,255,255,0.08)",
@@ -89,7 +89,7 @@ export default function StudyStreak() {
 
         {/* Day count */}
         <p
-          className="text-white font-extrabold text-[38px] tracking-tight leading-none mb-1 relative z-10"
+          className="text-white font-extrabold text-3xl sm:text-[38px] tracking-tight leading-none mb-1 relative z-10"
           style={{
             opacity: visible ? 1 : 0,
             transform: visible ? "translateY(0)" : "translateY(10px)",
@@ -101,7 +101,7 @@ export default function StudyStreak() {
 
         {/* Subtitle */}
         <p
-          className="text-gray-400 text-[14px] mb-6 relative z-10"
+          className="text-gray-400 text-sm mb-5 sm:mb-6 relative z-10"
           style={{
             opacity: visible ? 1 : 0,
             transition: "opacity 0.5s ease 0.25s",

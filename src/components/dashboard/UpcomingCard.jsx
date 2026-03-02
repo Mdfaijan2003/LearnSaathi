@@ -30,7 +30,7 @@ const tasks = [
 function TaskCard({ task, index, visible }) {
   return (
     <div
-      className="flex items-center justify-between bg-[#1e1e2e] border border-white/[0.06] rounded-2xl px-5 py-4 cursor-pointer hover:scale-[1.02] hover:bg-[#23233a] hover:border-white/10 hover:shadow-xl transition-all duration-300 ease-out"
+      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-[#1e1e2e] border border-white/[0.06] rounded-2xl px-4 sm:px-5 py-4 cursor-pointer hover:scale-[1.01] sm:hover:scale-[1.02] hover:bg-[#23233a] hover:border-white/10 hover:shadow-xl transition-all duration-300 ease-out"
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0px)" : "translateY(24px)",
@@ -38,13 +38,13 @@ function TaskCard({ task, index, visible }) {
       }}
     >
       {/* Left: accent bar + text */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
         <div className={`w-[3px] h-10 rounded-full shrink-0 ${task.barColor}`} />
         <div>
-          <p className="text-white font-bold text-[15px] tracking-tight leading-snug">
+          <p className="text-white font-bold text-sm sm:text-[15px] tracking-tight leading-snug">
             {task.title}
           </p>
-          <p className="text-gray-500 text-[13px] mt-0.5">{task.time}</p>
+          <p className="text-gray-500 text-xs sm:text-[13px] mt-0.5">{task.time}</p>
         </div>
       </div>
 
@@ -69,7 +69,7 @@ export default function UpcomingTasks() {
   return (
     <div >
       <div
-        className="bg-[#16162a] rounded-2xl p-6 w-[800px] shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
+        className="bg-[#16162a] rounded-2xl p-4 sm:p-6 w-full shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
         style={{
           opacity: visible ? 1 : 0,
           transform: visible ? "translateY(0)" : "translateY(16px)",
@@ -79,7 +79,7 @@ export default function UpcomingTasks() {
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2
-            className="text-white text-xl font-extrabold tracking-tight"
+            className="text-white text-lg sm:text-xl font-extrabold tracking-tight"
             style={{
               opacity: visible ? 1 : 0,
               transform: visible ? "translateX(0)" : "translateX(-12px)",

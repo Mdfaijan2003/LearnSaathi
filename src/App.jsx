@@ -1,7 +1,12 @@
-import DashboardLayout from "./components/layout/DashboardLayout";
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  return <DashboardLayout />;
+  return (
+  
+      <AppRoutes />
+
+  );
 }
 
 export default App;

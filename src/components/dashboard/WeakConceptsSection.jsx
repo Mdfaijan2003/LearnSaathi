@@ -317,7 +317,7 @@ function ConceptCard({ item, visible }) {
 
   return (
     <div
-      className="rounded-xl p-5 border cursor-pointer transition-all duration-500 ease-out hover:scale-[1.02] hover:bg-white/5 hover:border-white/10 hover:shadow-xl bg-white/[0.03] border-white/[0.07]"
+      className="rounded-xl p-4 sm:p-5 border cursor-pointer transition-all duration-500 ease-out hover:scale-[1.01] sm:hover:scale-[1.02] hover:bg-white/5 hover:border-white/10 hover:shadow-xl bg-white/[0.03] border-white/[0.07]"
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0px)" : "translateY(24px)",
@@ -325,8 +325,8 @@ function ConceptCard({ item, visible }) {
       }}
     >
       {/* Top row */}
-      <div className="flex items-center justify-between gap-4">
-        <p className="text-white font-bold text-[15px] tracking-tight">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+        <p className="text-white font-bold text-sm sm:text-[15px] tracking-tight">
           {item.title}
         </p>
         <span
@@ -344,11 +344,11 @@ function ConceptCard({ item, visible }) {
       <AnimatedBar target={item.accuracy} isCalc={isCalc} started={visible} />
 
       {/* Bottom row */}
-      <div className="flex items-center justify-between">
-        <p className="text-gray-500 text-[13px]">
+      <div className="flex  flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <p className="text-gray-500 text-xs sm:text-[13px]">
           Difficulty: {item.difficulty}
         </p>
-        <button className="bg-gradient-to-r from-orange-800 to-orange-900 hover:from-orange-700 hover:to-orange-800 text-white text-[13px] font-semibold px-4 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-[0_4px_16px_rgba(194,65,12,0.5)] active:scale-95">
+        <button className="w-full sm:w-auto bg-gradient-to-r from-orange-800 to-orange-900 hover:from-orange-700 hover:to-orange-800 text-white text-[13px] font-semibold px-4 py-1.5 rounded-lg transition-all duration-200 hover:scale-[1.02] sm:hover:scale-105 hover:shadow-[0_4px_16px_rgba(194,65,12,0.5)] active:scale-95">
           Practice Now
         </button>
       </div>
@@ -368,14 +368,14 @@ export default function WeakConcepts() {
     
       <div>
         <div
-          className="bg-gradient-to-br from-[#1b1b28] to-[#141420] rounded-2xl p-6 w-[800px] shadow-[0_24px_64px_rgba(0,0,0,0.55)] transition-all duration-500 ease-out"
+          className="bg-gradient-to-br from-[#1b1b28] to-[#141420] rounded-2xl p-4 sm:p-6 w-full shadow-[0_24px_64px_rgba(0,0,0,0.55)] transition-all duration-500 ease-out"
           style={{
             opacity: visible ? 1 : 0,
             transform: visible ? "translateY(0)" : "translateY(20px)",
           }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 sm:mb-6">
             {/* Left: icon + title */}
             <div className="flex items-center gap-2.5">
               <svg
@@ -404,7 +404,7 @@ export default function WeakConcepts() {
                 <circle cx="12" cy="17" r="1" fill="#dc3c3c" />
               </svg>
               <h2
-                className="text-white text-[19px] font-extrabold tracking-tight transition-all duration-500 ease-out"
+                className="text-white text-base sm:text-[19px] font-extrabold tracking-tight transition-all duration-500 ease-out"
                 style={{
                   opacity: visible ? 1 : 0,
                   transform: visible ? "translateX(0)" : "translateX(-12px)",
