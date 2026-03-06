@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Layers, Mail, Lock, User, ArrowRight, ArrowLeft } from "lucide-react";
 import { Heading, Text, TextLink } from "../components/ui/Typography";
 import { Button } from "../components/ui/Button";
+import { HomePage } from "./HomePage";
 
 // Reusable SVG icons for Social Login
 const GoogleIcon = () => (
@@ -53,6 +54,11 @@ const SocialButton = ({ icon, provider, onClick }) => (
 
 const AnimatedAuthPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
+
+  const openHomePage = (e) => {
+    e.preventDefault();
+    window.location.href = "./HomePage";
+  };
 
   return (
     // On mobile: bg-white and no padding. On desktop: bg-slate-50 and p-6.
@@ -138,6 +144,7 @@ const AnimatedAuthPage = () => {
                   />
                 </div>
               </div>
+
               <Button variant="primary" className="w-full h-11 mt-4">
                 Sign Up
               </Button>
@@ -195,7 +202,7 @@ const AnimatedAuthPage = () => {
               <div className="flex-grow border-t border-slate-200"></div>
             </div>
 
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={openHomePage}>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
                   Email Address
@@ -230,6 +237,7 @@ const AnimatedAuthPage = () => {
                   />
                 </div>
               </div>
+
               <Button variant="primary" className="w-full h-11 mt-4">
                 Sign In
               </Button>
