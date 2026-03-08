@@ -22,11 +22,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      lowercase: true
+      lowercase: true,
+      index: true
     },
 
     phoneNumber: {
-      type: String
+      type: String,
+      unique: true,
     },
 
     avatar: {
@@ -56,18 +58,17 @@ const userSchema = new mongoose.Schema(
 );
 
 
-userSchema.pre("save", async function () {
+userSchema.pre("save", async function (next) {
 
   if (!this.isModified("password")) return;
 
   this.password = await bcrypt.hash(this.password, 10);
-
 });
 
 
 // Password check method
 userSchema.methods.isPasswordCorrect = async function (password) {
-  return bcrypt.compare(password, this.password);
+  return await bcrypt.compare(password, this.password);
 };
 
 
@@ -80,8 +81,10 @@ userSchema.methods.generateAccessToken = function () {
       username: this.username,
       role: this.role
     },
-    process.env.JWT_SECRET,
-    { expiresIn: "1d" }
+    process.env.ACCESS_TOKEN_SECRET,
+    { 
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY 
+    }
   );
 };
 
@@ -92,8 +95,10 @@ userSchema.methods.generateRefreshToken = function () {
     {
       _id: this._id
     },
-    process.env.JWT_SECRET,
-    { expiresIn: "7d" }
+    process.env.REFRESH_TOKEN_SECRET,
+    { 
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRY 
+    }
   );
 };
 

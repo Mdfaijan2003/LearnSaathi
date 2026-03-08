@@ -3,7 +3,7 @@ import cors from "cors";
 import cookiieParser from "cookie-parser";
 
 
-import authRoutes from "./routes/auth.routes.js";
+import authRoutes from "./routes/user.auth.routes.js";
 
 const app = express();
 
@@ -16,6 +16,6 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(express.static("Public"));
 app.use(cookiieParser());
 
-app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/users", authRoutes);
 
 export { app };
