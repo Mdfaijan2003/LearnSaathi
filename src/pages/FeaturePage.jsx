@@ -26,7 +26,7 @@ const FeaturesPage = () => {
       <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col md:flex-row px-6 py-12 gap-12">
         
         {/* Sticky Sidebar Navigation */}
-        <aside className="w-full md:w-64 flex-shrink-0 hidden md:block">
+        <aside className="w-full md:w-64 shrink-0 hidden md:block">
           <div className="sticky top-24 space-y-1 pr-6 border-r border-slate-200">
             <Text className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-4 px-3">Core Engines</Text>
             <SidebarLink href="#learning-paths" icon={<Target size={16}/>} label="AI Learning Paths" active />
