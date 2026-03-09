@@ -324,9 +324,6 @@ const Navbar = () => {
       {/* =========================================
           THE MEGA MENU DROPDOWN UI
       ========================================= */}
-      {/* This acts as an invisible overlay to close the menu 
-        if the user clicks outside of it.
-      */}
       {activeMenu && (
         <div
           className="fixed inset-0 top-[110px] z-30"
