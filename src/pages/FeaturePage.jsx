@@ -1,15 +1,16 @@
 import React from 'react';
-import Navbar from '../components/layout/Navbar';
+
 import Footer from '../components/layout/Footer';
 import { Heading, Text } from '../components/ui/Typography';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
 import { Target, BookOpen, Zap, MessageSquare, Clock, UploadCloud } from 'lucide-react';
+import Navbar2 from '../components/layout/Navbar2';
 
 const FeaturesPage = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col">
-      <Navbar />
+      <Navbar2 />
       
       {/* Page Header */}
       <header className="bg-white border-b border-slate-200 py-16 px-6">

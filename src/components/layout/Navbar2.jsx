@@ -2,7 +2,7 @@ import React from "react";
 import { Layers } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Heading, Text, TextLink } from "../ui/Typography";
-
+import { Link } from "react-router-dom";
 const Navbar2 = () => {
   return (
     <>
@@ -24,12 +24,14 @@ const Navbar2 = () => {
       {/* Main Navigation */}
       <nav className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
         {/* Brand */}
-        <div className="flex items-center space-x-2">
-          <Layers className="text-slate-800" size={24} />
-          <Heading level={4} className="text-xl tracking-tight m-0">
-            LearnSaathi
-          </Heading>
-        </div>
+        <Link to="/">
+          <div className="flex items-center space-x-2 mr-8">
+            <Layers className="text-slate-800" size={24} />
+            <Heading level={4} className="text-xl tracking-tight m-0">
+              LearnSaathi
+            </Heading>
+          </div>
+          </Link>
 
         {/* Navigation Links */}
         <div className="hidden md:flex space-x-8">

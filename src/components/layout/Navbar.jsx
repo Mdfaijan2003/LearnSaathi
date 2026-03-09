@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Layers, Bell, User, Search, ChevronDown, X } from "lucide-react";
 import { Heading, Text, TextLink } from "../ui/Typography";
-
+import { Link } from "react-router-dom";
 // Dummy data for the mega menu categories
 const tutorialCategories = [
   {
@@ -241,12 +241,14 @@ const Navbar = () => {
         {/* Left Section: Brand & Links */}
         <div className="flex items-center">
           {/* Brand */}
+          <Link to="/HomePage">
           <div className="flex items-center space-x-2 mr-8">
             <Layers className="text-slate-800" size={24} />
             <Heading level={4} className="text-xl tracking-tight m-0">
               LearnSaathi
             </Heading>
           </div>
+          </Link>
 
           {/* Navigation Links */}
           <div className="hidden lg:flex space-x-2">

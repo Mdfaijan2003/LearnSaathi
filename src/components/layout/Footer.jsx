@@ -5,16 +5,16 @@ const linkGroups = [
   {
     title: "Platform",
     links: [
-      { label: "Dashboard", href: "#dashboard" },
-      { label: "AI Tutor", href: "#ai-tutor" },
-      { label: "Practice", href: "#practice" },
-      { label: "Roadmap", href: "#roadmap" },
+      { label: "Dashboard", href: "/" },
+      { label: "AI Tutor", href: "/HomePage" },
+      { label: "Practice", href: "/HomePage" },
+      { label: "Roadmap", href: "/HomePage" },
     ],
   },
   {
     title: "Resources",
     links: [
-      { label: "Notes", href: "#notes" },
+      { label: "Notes", href: "/HomePage" },
       { label: "Planner", href: "#planner" },
       { label: "Progress Analytics", href: "#analytics" },
       { label: "Help Center", href: "#help" },
@@ -51,11 +51,11 @@ const Footer = () => {
             </p>
 
             <div className="space-y-3 text-sm text-slate-400 pt-2">
-              <p className="inline-flex items-center gap-3 hover:text-slate-200 transition-colors cursor-default">
+              <p className="inline-flex items-center p-2 gap-3 hover:text-slate-200 transition-colors cursor-default">
                 <Mail size={16} /> support@learnsaathi.app
               </p>
-              <p className="inline-flex items-center gap-3 hover:text-slate-200 transition-colors cursor-default">
-                <Phone size={16} /> +91 90000 00000
+              <p className="inline-flex items-center p-2 gap-3 hover:text-slate-200 transition-colors cursor-default">
+                <Phone size={16} /> +91 7439902116
               </p>
               <p className="inline-flex items-center gap-3 hover:text-slate-200 transition-colors cursor-default">
                 <MapPin size={16} /> India
