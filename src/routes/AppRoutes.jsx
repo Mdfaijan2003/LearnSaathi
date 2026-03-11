@@ -3,6 +3,8 @@ import LandingPage from "../pages/LandingPage";
 import FeaturesPage from "../pages/FeaturePage";
 import AnimatedAuthPage from "../pages/AnimatedAuthPage";
 import { HomePage } from "../pages/HomePage";
+import NotesDashboard from "../pages/NotesDashboard";
+import CareerPath from "../pages/CareerPath";
 
 const AppRoutes = () => {
   return (
@@ -11,6 +13,8 @@ const AppRoutes = () => {
       <Route path="/features" element={<FeaturesPage />} />
       <Route path="/signin" element={<AnimatedAuthPage />} />
       <Route path="/HomePage" element={<HomePage />} />
+      <Route path="/Notes" element={<NotesDashboard />} />
+      <Route path="/careerpath" element={<CareerPath />} />
     </Routes>
   );
 };

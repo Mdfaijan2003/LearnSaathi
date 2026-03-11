@@ -284,13 +284,15 @@ const Navbar = () => {
 
             {/* Standard Links */}
 
-            <TextLink variant="nav" href="#notes" className="px-3 py-2">
+            
+            <TextLink variant="nav" to={'/Notes'} className="px-3 py-2">
               Notes
+            
             </TextLink>
             <TextLink variant="nav" href="#exercise" className="px-3 py-2">
               Exercise
             </TextLink>
-            <TextLink variant="nav" href="#exercise" className="px-3 py-2">
+            <TextLink variant="nav" to={'/careerpath'} className="px-3 py-2">
               Career Path
             </TextLink>
           </div>
