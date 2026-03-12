@@ -4,7 +4,8 @@ import FeaturesPage from "../pages/FeaturePage";
 import AnimatedAuthPage from "../pages/AnimatedAuthPage";
 import { HomePage } from "../pages/HomePage";
 import NotesDashboard from "../pages/NotesDashboard";
-import CareerPath from "../pages/CareerPath";
+import CareerExplorer from "../pages/CareerExplorer";
+import ExerciseHubPage from "../pages/ExerciseHubPage";
 
 const AppRoutes = () => {
   return (
@@ -14,7 +15,8 @@ const AppRoutes = () => {
       <Route path="/signin" element={<AnimatedAuthPage />} />
       <Route path="/HomePage" element={<HomePage />} />
       <Route path="/Notes" element={<NotesDashboard />} />
-      <Route path="/careerpath" element={<CareerPath />} />
+      <Route path="/CareerExplorer" element={<CareerExplorer />} />
+      <Route path="/Exercise" element={<ExerciseHubPage />} />
     </Routes>
   );
 };
