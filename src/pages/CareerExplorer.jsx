@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import ReactFlow, { 
   Background, Controls, Handle, Position, 
-  applyNodeChanges, applyEdgeChanges, addEdge 
+  applyNodeChanges, applyEdgeChanges 
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Compass, ArrowLeft, Milestone, GraduationCap, ChevronRight } from 'lucide-react';
