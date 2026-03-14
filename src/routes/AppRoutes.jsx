@@ -6,6 +6,9 @@ import { HomePage } from "../pages/HomePage";
 import NotesDashboard from "../pages/NotesDashboard";
 import CareerExplorer from "../pages/CareerExplorer";
 
+import ExerciseHubPage from "../pages/ExerciseHubPage";
+
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -14,7 +17,11 @@ const AppRoutes = () => {
       <Route path="/signin" element={<AnimatedAuthPage />} />
       <Route path="/HomePage" element={<HomePage />} />
       <Route path="/Notes" element={<NotesDashboard />} />
+
       <Route path="/careerpath" element={<CareerExplorer />} />
+
+      <Route path="/Exercise" element={<ExerciseHubPage />} />
+
     </Routes>
   );
 };

@@ -40,7 +40,7 @@ export const StructuredCard = ({ title, description, icon, children, className =
         </h3>
       </div>
       
-      {/* Content Section */}
+      
       <div className="p-6 flex-1 flex flex-col bg-white">
         {description && (
           <p className="text-sm text-slate-600 leading-relaxed mb-4 z-10">
@@ -48,7 +48,7 @@ export const StructuredCard = ({ title, description, icon, children, className =
           </p>
         )}
         
-        {/* Any extra content (like buttons, tags, or links) renders at the bottom */}
+       
         <div className="mt-auto">
           {children}
         </div>

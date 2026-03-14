@@ -31,7 +31,7 @@ const Navbar2 = () => {
               LearnSaathi
             </Heading>
           </div>
-          </Link>
+        </Link>
 
         {/* Navigation Links */}
         <div className="hidden md:flex space-x-8">

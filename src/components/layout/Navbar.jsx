@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Layers, Bell, User, Search, ChevronDown, X } from "lucide-react";
 import { Heading, Text, TextLink } from "../ui/Typography";
-import { Link } from "react-router-dom";
+import { Link, useNavigate,useLocation  } from "react-router-dom";
 // Dummy data for the mega menu categories
 const tutorialCategories = [
   {
@@ -208,6 +208,10 @@ const studyMaterials = [
 ];
 
 const Navbar = () => {
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // State to track which menu is open (null means closed)
   const [activeMenu, setActiveMenu] = useState(null);
 
@@ -285,16 +289,48 @@ const Navbar = () => {
             {/* Standard Links */}
 
             
-            <TextLink variant="nav" to={'/Notes'} className="px-3 py-2">
+            <button
+              onClick={() => {
+                setActiveMenu(null);
+                navigate("/notes");
+              }}
+              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 active:scale-95 focus:outline-none ${
+                location.pathname === "/notes"
+                  ? "bg-slate-100 text-slate-900"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+              }`}
+            >
               Notes
-            
-            </TextLink>
-            <TextLink variant="nav" href="#exercise" className="px-3 py-2">
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveMenu(null);
+                navigate("/exercise");
+              }}
+              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 active:scale-95 focus:outline-none ${
+                location.pathname === "/exercise"
+                  ? "bg-slate-100 text-slate-900"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+              }`}
+            >
               Exercise
-            </TextLink>
-            <TextLink variant="nav" to={'/careerpath'} className="px-3 py-2">
-              Career Path
-            </TextLink>
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveMenu(null);
+                navigate("/CareerExplorer");
+              }}
+              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 active:scale-95 focus:outline-none ${
+                location.pathname === "/CareerExplorer"
+                  ? "bg-slate-100 text-slate-900"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+              }`}
+            >
+              Career Explorer
+            </button>
+
           </div>
         </div>
 
