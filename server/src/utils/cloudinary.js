@@ -8,24 +8,25 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadCloudinary = async (localFilePath) => {
+export const uploadCloudinary = async (localFilePath) => {
   try {
     if (!localFilePath) return null;
 
     const response = await cloudinary.uploader.upload(localFilePath, {
-      folder: "learnsaathi",
+      folder: "learnsaathi/uploads",
       resource_type: "auto",
     });
 
-    // delete local file after upload
-    fs.unlinkSync(localFilePath);
-
-    console.log("File uploaded to Cloudinary:", response.secure_url);
+    if (localFilePath && fs.existsSync(localFilePath)) {
+      fs.unlink(localFilePath, () => {});
+    }
 
     return response;
+
   } catch (error) {
-    if (fs.existsSync(localFilePath)) {
-      fs.unlinkSync(localFilePath);
+
+    if (localFilePath && fs.existsSync(localFilePath)) {
+      fs.unlink(localFilePath, () => {});
     }
 
     console.error("Cloudinary upload error:", error);
@@ -33,4 +34,17 @@ const uploadCloudinary = async (localFilePath) => {
   }
 };
 
-export { uploadCloudinary };
+export const deleteFromCloudinary = async (publicId) => {
+  try {
+
+    const response = await cloudinary.uploader.destroy(publicId);
+
+    return response;
+
+  } catch (error) {
+
+    console.error("Cloudinary delete error:", error);
+    return null;
+
+  }
+};

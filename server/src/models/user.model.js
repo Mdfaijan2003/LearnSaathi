@@ -41,7 +41,10 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: true
+      required: function () {
+        return this.authProvider === "local";
+      },
+      select: false
     },
 
     role: {
@@ -50,6 +53,24 @@ const userSchema = new mongoose.Schema(
       default: "student"
     },
 
+    isEmailVerified: {
+      type: Boolean,
+      default: false
+    },
+
+    isPhoneVerified: {
+      type: Boolean,
+      default: false
+    },
+    googleId: {
+      type: String
+    },
+
+    authProvider: {
+      type: String,
+      enum: ["local", "google"],
+      default: "local"
+    },
     refreshToken: {
       type: String
     }
