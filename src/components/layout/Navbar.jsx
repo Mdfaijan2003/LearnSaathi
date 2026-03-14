@@ -320,7 +320,7 @@ const Navbar = () => {
             <button
               onClick={() => {
                 setActiveMenu(null);
-                navigate("/CareerExplorer");
+                navigate("/careerpath");
               }}
               className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 active:scale-95 focus:outline-none ${
                 location.pathname === "/CareerExplorer"
