@@ -26,6 +26,6 @@ export const verifyJWT = async (req, res, next) => {
     next();
 
   } catch (error) {
-    throw new ApiError(401, "Invalid or expired token");
+    throw new ApiError(401, "Invalid or expired token", error);
   }
 };

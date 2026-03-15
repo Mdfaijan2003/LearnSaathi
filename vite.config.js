@@ -10,6 +10,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   base: "/",
   plugins: [react(), tailwindcss()],
+  define: {
+    'process.env': {}  // This tells Vite to handle process.env
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

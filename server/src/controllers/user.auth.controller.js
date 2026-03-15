@@ -7,21 +7,7 @@ import jwt from "jsonwebtoken";
 export const registerUser = asyncHandler(async (req, res) => {
 
   const { username, email, password, fullName, phoneNumber } = req.body;
-  // if (username=== "") {
-  //   throw new ApiError(400, "Username is required");
-  // }
-  // if (email=== "") {
-  //   throw new ApiError(400, "Email is required");
-  // }
-  // if (password=== "") {
-  //   throw new ApiError(400, "Password is required");
-  // }
-  // if (fullName=== "") {
-  //   throw new ApiError(400, "Full name is required");
-  // }
-  // if (phoneNumber=== "") {
-  //   throw new ApiError(400, "Phone number is required");
-  // }
+
 
   if(
     [username, email, password, fullName, phoneNumber].some((field) => field?.trim() === "")
@@ -102,7 +88,7 @@ export const loginUser = async (req, res) => {
     );
 
   } catch (error) {
-    throw new ApiError(500, "Failed to login user");
+    throw new ApiError(500, "Failed to login user", error);
   }
 };
 

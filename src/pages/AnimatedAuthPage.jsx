@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Layers, Mail, Lock, User, ArrowRight, ArrowLeft } from "lucide-react";
+import { navigate } from "react-router-dom";
 import { Heading, Text, TextLink } from "../components/ui/Typography";
 import { Button } from "../components/ui/Button";
-import { HomePage } from "./HomePage";
-
+import HomePage from "./HomePage";
+import Api from "../components/api/axios.js";
 // Reusable SVG icons for Social Login
 const GoogleIcon = () => (
   <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
@@ -55,16 +56,71 @@ const SocialButton = ({ icon, provider, onClick }) => (
 const AnimatedAuthPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
 
-  const openHomePage = (e) => {
+  const [modal, setModal] = useState({
+    isOpen: false,
+    type: "success",
+    title: "",
+    message: "",
+    redirectTo: null,
+  });
+
+  const openModal = ({ type, title, message, redirectTo = null }) => {
+    setModal({
+      isOpen: true,
+      type,
+      title,
+      message,
+      redirectTo,
+    });
+  };
+
+  const closeModal = () => {
+    const redirectPath = modal.redirectTo;
+
+    setModal({
+      isOpen: false,
+      type: "success",
+      title: "",
+      message: "",
+      redirectTo: null,
+    });
+
+    if (redirectPath) {
+      navigate(redirectPath);
+    }
+  };
+
+  const handleSignUp = (e) => {
     e.preventDefault();
-    window.location.href = "./HomePage";
+    try {
+      const res = Api.post(`/users/signUp`);
+       openModal({
+        title : "success"
+       });
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+
+  const handleSignIn = (e) => {
+    e.preventDefault();
+    try {
+      const res = Api.post(`/users/signIn`);
+      if (!res.ok) {
+        throw new Error("Failed to SignIn");
+      }
+
+      window.location.href = "/HomePage";
+    } catch (error) {
+      throw new Error(error.message);
+    }
   };
 
   return (
     // On mobile: bg-white and no padding. On desktop: bg-slate-50 and p-6.
     <div className="min-h-screen flex items-center justify-center bg-white lg:bg-slate-50 lg:p-6 font-sans">
       {/* On mobile: h-screen, no border/radius. On desktop: h-[700px], rounded, shadow */}
-      <div className="relative w-full max-w-5xl h-screen lg:h-[700px] bg-white lg:rounded-xl lg:shadow-lg lg:border lg:border-slate-200 overflow-hidden flex">
+      <div className="relative w-full max-w-5xl h-screen lg:h-[800px] bg-white lg:rounded-xl lg:shadow-lg lg:border lg:border-slate-200 overflow-hidden flex">
         {/* =========================================
             SIGN UP FORM 
         ========================================= */}
@@ -104,7 +160,25 @@ const AnimatedAuthPage = () => {
               <div className="flex-grow border-t border-slate-200"></div>
             </div>
 
-            <form className="space-y-4">
+            <form
+              className="space-y-4 "
+              onSubmit={() => {
+                handleSignUp();
+              }}
+            >
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  User Name
+                </label>
+                <div className="relative flex items-center">
+                  <User className="absolute left-3 text-slate-400" size={18} />
+                  <input
+                    type="text"
+                    placeholder="Alpha learner"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all"
+                  />
+                </div>
+              </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
                   Full Name
@@ -140,6 +214,19 @@ const AnimatedAuthPage = () => {
                   <input
                     type="password"
                     placeholder="••••••••"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Phone Number
+                </label>
+                <div className="relative flex items-center">
+                  <Lock className="absolute left-3 text-slate-400" size={18} />
+                  <input
+                    type="number"
+                    placeholder="+91 7432109875"
                     className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all"
                   />
                 </div>
@@ -202,9 +289,14 @@ const AnimatedAuthPage = () => {
               <div className="flex-grow border-t border-slate-200"></div>
             </div>
 
-            <form className="space-y-4" onSubmit={openHomePage}>
+            <form
+              className="space-y-4"
+              onSubmit={() => {
+                handleSignIn();
+              }}
+            >
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1 ">
                   Email Address
                 </label>
                 <div className="relative flex items-center">
@@ -241,6 +333,30 @@ const AnimatedAuthPage = () => {
               <Button variant="primary" className="w-full h-11 mt-4">
                 Sign In
               </Button>
+
+              {/* <div className="relative flex items-center mb-6">
+                <div className="flex-grow border-t border-slate-200"></div>
+                <span className="flex-shrink-0 mx-4 text-slate-400 text-xs uppercase tracking-wider">
+                  Or sign in with Phone Number
+                </span>
+                <div className="flex-grow border-t border-slate-200"></div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Phone Number
+                </label>
+                <div className="relative flex items-center">
+                  <Mail className="absolute left-3 text-slate-400" size={18} />
+                  <input
+                    type="number"
+                    placeholder="+91 1234567890"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all"
+                  />
+                </div>
+              </div>
+              <Button variant="primary" className="w-full h-11 mt-4">
+                Get OTP
+              </Button> */}
             </form>
 
             {/* Mobile-only toggle link (Hidden on desktop) */}

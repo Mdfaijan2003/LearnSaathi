@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Layers } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Heading, Text, TextLink } from "../ui/Typography";
 import { Link } from "react-router-dom";
+
 const Navbar2 = () => {
   return (
     <>
@@ -47,6 +48,7 @@ const Navbar2 = () => {
         </div>
 
         {/* Actions */}
+
         <div className="flex items-center space-x-3">
           <TextLink to="/signin">
             <Button variant="ghost" className="hidden md:inline-flex">
