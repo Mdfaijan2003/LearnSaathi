@@ -177,31 +177,6 @@ export const loginUser = asyncHandler(async(req,res)=>{
 });
 
 
-export const approveTeacher = asyncHandler(async (req, res) => {
-
-  const user = await User.findByIdAndUpdate(
-    req.params.id,
-    { teacherStatus: "approved" },
-    { new: true }
-  );
-
-  return res.status(200).json(
-    new ApiResponse(200, user, "Teacher approved")
-  );
-});
-
-export const getPendingTeachers = asyncHandler(async (req, res) => {
-
-  const teachers = await User.find({
-    role: "teacher",
-    teacherStatus: "pending"
-  }).select("-password");
-
-  return res.status(200).json(
-    new ApiResponse(200, teachers, "Pending teachers")
-  );
-});
-
 
 export const logoutUser = asyncHandler(async (req, res) => {
 

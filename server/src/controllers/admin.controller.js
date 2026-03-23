@@ -131,7 +131,6 @@ export const getAdminDashboard = asyncHandler(async (req, res) => {
   );
 });
 
-
 export const getPendingTeachers = asyncHandler(async (req, res) => {
 
   const { page = 1, limit = 10, search = "" } = req.query;
@@ -217,6 +216,8 @@ export const rejectTeacher = asyncHandler(async (req, res) => {
   }
 
   teacher.teacherStatus = "rejected";
+  teacher.isEmailVerified = false; // optional
+
   await teacher.save();
 
   return res.status(200).json(
