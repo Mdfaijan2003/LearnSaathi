@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import passport from "./config/passport.js";
 
 import authRoutes from "./routes/user.auth.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
+import teacherRoutes from "./routes/teacher.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
 import programRoutes from "./routes/program.routes.js";
 import subjectRoutes from "./routes/subject.routes.js";
@@ -43,6 +45,8 @@ app.use(passport.initialize());
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/auth/otp", otpRoutes);
+app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/teacher", teacherRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/programs", programRoutes);
 app.use("/api/v1/subjects", subjectRoutes);

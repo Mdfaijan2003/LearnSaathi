@@ -59,7 +59,8 @@ export const verifyOtp = asyncHandler(async(req,res)=>{
     password: tempUser.password,
     fullName: tempUser.fullName,
     phoneNumber: tempUser.phoneNumber,
-    role: "student",
+    role: tempUser.role || "student",
+    teacherStatus: tempUser.role === "teacher" ? "pending" : "approved",
     authProvider: "local",
     isEmailVerified: true
   });

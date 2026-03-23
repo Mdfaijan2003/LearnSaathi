@@ -6,6 +6,7 @@ import "./config/env.js";
 
 import connectDB from "./db/db.js";
 import { app } from "./app.js";
+import { createMasterAdmin } from "./utils/createMasterAdmin.js";
 
 // dotenv.config({
 //   path: "../.env",
@@ -15,6 +16,8 @@ console.log("Hello, Server is starting...");
 const startServer = async () => {
   try {
     await connectDB();
+
+    await createMasterAdmin();
 
     app.listen(process.env.PORT || 5000, () => {
       console.log(`🚀 Server running on port ${process.env.PORT}`);

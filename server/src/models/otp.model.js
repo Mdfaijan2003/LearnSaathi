@@ -37,7 +37,12 @@ const otpSchema = new mongoose.Schema(
     email: String,
     password: String,
     fullName: String,
-    phoneNumber: String
+    phoneNumber: String,
+    role: {
+      type: String,
+      enum: ["student","teacher"],
+      default: "student"
+    }
   }
 },
 { timestamps: true }

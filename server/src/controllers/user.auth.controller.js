@@ -30,12 +30,20 @@ export const generateAccessAndRefreshTokens = async(userId) => {
 
 export const registerUser = asyncHandler(async(req,res)=>{
 
-  const {username,email,password,fullName,phoneNumber} = req.body;
+  const {username,email,password,fullName,phoneNumber,role} = req.body;
 
   if(
-    [username,email,password,fullName,phoneNumber].some((field) => field?.trim() === "")
+    [username,email,password,fullName,phoneNumber,role].some((field) => field?.trim() === "")
   ){
     throw new ApiError(400,"All fields are required and cannot be empty");
+  }
+
+  const allowedRoles = ["student","teacher"];
+
+  const userRole = role && allowedRoles.includes(role) ? role : "student";
+
+  if(role && !allowedRoles.includes(role)){
+    throw new ApiError(400,"Invalid role");
   }
 
   const existedUser = await User.findOne({
@@ -89,6 +97,7 @@ export const registerUser = asyncHandler(async(req,res)=>{
       password,
       fullName,
       phoneNumber,
+      role: userRole
     }
   });
   
@@ -128,10 +137,15 @@ export const loginUser = asyncHandler(async(req,res)=>{
     throw new ApiError(401,"Verify email first");
   }
 
+
   const isPasswordValid = await user.isPasswordCorrect(password);
 
   if(!isPasswordValid){
     throw new ApiError(401,"Invalid password");
+  }
+
+  if (user.role === "teacher" && user.teacherStatus !== "approved") {
+    throw new ApiError(403, "Teacher not approved yet");
   }
 
   // const accessToken = user.generateAccessToken();
@@ -160,6 +174,32 @@ export const loginUser = asyncHandler(async(req,res)=>{
     },"User Logged in successful")
   );
 
+});
+
+
+export const approveTeacher = asyncHandler(async (req, res) => {
+
+  const user = await User.findByIdAndUpdate(
+    req.params.id,
+    { teacherStatus: "approved" },
+    { new: true }
+  );
+
+  return res.status(200).json(
+    new ApiResponse(200, user, "Teacher approved")
+  );
+});
+
+export const getPendingTeachers = asyncHandler(async (req, res) => {
+
+  const teachers = await User.find({
+    role: "teacher",
+    teacherStatus: "pending"
+  }).select("-password");
+
+  return res.status(200).json(
+    new ApiResponse(200, teachers, "Pending teachers")
+  );
 });
 
 

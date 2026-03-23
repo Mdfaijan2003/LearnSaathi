@@ -52,6 +52,14 @@ const userSchema = new mongoose.Schema(
       enum: ["student", "teacher", "admin"],
       default: "student"
     },
+    
+    teacherStatus: {
+      type: String,
+      enum: ["pending","approved","rejected"],
+      default: function () {
+        return this.role === "teacher" ? "pending" : "approved";
+      }
+    },
 
     isEmailVerified: {
       type: Boolean,
@@ -71,6 +79,7 @@ const userSchema = new mongoose.Schema(
       enum: ["local", "google"],
       default: "local"
     },
+
     refreshToken: {
       type: String
     }

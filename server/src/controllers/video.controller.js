@@ -8,8 +8,8 @@ import { uploadCloudinary } from "../utils/cloudinary.js";
 // Upload Video
 export const uploadVideo = asyncHandler(async (req, res) => {
 
-  if (req.user.role !== "teacher") {
-    throw new ApiError(403, "Only teachers can upload videos");
+  if (req.user.role !== "teacher" && req.user.teacherStatus !== "approved") {
+    throw new ApiError(403, "Only approved teachers can upload videos");
   }
 
   const {

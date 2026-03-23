@@ -11,15 +11,19 @@ import {
 
 import { verifyJWT } from "../middlewares/user.auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { allowRoles } from "../middlewares/role.middleware.js";
+import { requireApprovedTeacher } from "../middlewares/teacher.middleware.js";
 
 const router = express.Router();
 
 
 // Upload video
 router.post(
-  "/upload",
+  "/upload-video",
   verifyJWT,
+  allowRoles("teacher","admin"),
   upload.fields([{ name: "video", maxCount: 1 }]),
+  requireApprovedTeacher,
   uploadVideo
 );
 
