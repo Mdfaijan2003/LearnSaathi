@@ -1,47 +1,307 @@
+import mongoose from "mongoose";
 import Program from "../models/program.model.js";
 import Category from "../models/category.model.js";
+import Subject from "../models/subject.model.js";
+
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 
-// Create Program
+/* -------------------- CREATE PROGRAM -------------------- */
+
 export const createProgram = asyncHandler(async (req, res) => {
 
-  const { name, categoryId, description } = req.body;
+  const { name, description, category, icon } = req.body;
 
-  if (!name || !categoryId) {
+  if (!name || !category) {
     throw new ApiError(400, "Name and category are required");
   }
 
-  const categoryExists = await Category.findById(categoryId);
-
-  if (!categoryExists) {
-    throw new ApiError(404, "Category not found");
+  if (!mongoose.Types.ObjectId.isValid(category)) {
+    throw new ApiError(400, "Invalid category ID");
   }
 
-  const program = await Program.create({
-    name,
-    category: categoryId,
-    description
+  
+
+  // ✅ check category exists + active
+  const categoryDoc = await Category.findOne({
+    _id: category,
+    isActive: true
   });
 
+  if (!categoryDoc) {
+    throw new ApiError(404, "Category not found or inactive");
+  }
+
+  const normalizedName = name.trim().toLowerCase();
+
+  let program;
+
+  try {
+    program = await Program.create({
+      name: normalizedName,
+      description,
+      category,
+      icon,
+      createdBy: req.user._id
+    });
+
+  } catch (error) {
+    if (error.code === 11000) {
+      throw new ApiError(409, "Program already exists in this category");
+    }
+    throw error;
+  }
+
   return res.status(201).json(
-    new ApiResponse(201, program, "Program created successfully")
+    new ApiResponse(201, program, "Program created")
   );
 });
 
 
-// Get Programs by Category
-export const getPrograms = asyncHandler(async (req, res) => {
+/* -------------------- GET ALL PROGRAMS -------------------- */
 
-  const { categoryId } = req.query;
+export const getAllPrograms = asyncHandler(async (req, res) => {
 
-  const filter = categoryId ? { category: categoryId } : {};
+  let { page = 1, limit = 10, search, category } = req.query;
 
-  const programs = await Program.find(filter).populate("category", "name");
+  page = parseInt(page);
+  limit = parseInt(limit);
+
+  if (page < 1 || limit < 1) {
+    throw new ApiError(400, "Invalid pagination values");
+  }
+
+  const matchStage = {};
+
+  // 🔥 USER → only active
+  if (!req.user || req.user.role !== "admin") {
+    matchStage.isActive = true;
+  }
+
+  /* -------------------- CATEGORY FILTER -------------------- */
+
+  if (category) {
+    if (!mongoose.Types.ObjectId.isValid(category)) {
+      throw new ApiError(400, "Invalid category ID");
+    }
+    matchStage.category = new mongoose.Types.ObjectId(category);
+  }
+
+  /* -------------------- SEARCH (FIXED) -------------------- */
+
+  if (search) {
+    const normalizedSearch = search.trim().toLowerCase();
+
+    matchStage.$or = [
+      // ⚡ FAST PREFIX SEARCH (uses index)
+      {
+        name: {
+          $regex: `^${normalizedSearch}`,
+          $options: "i"
+        }
+      },
+      // 🔍 fallback search
+      {
+        name: {
+          $regex: normalizedSearch,
+          $options: "i"
+        }
+      }
+    ];
+  }
+
+  const skip = (page - 1) * limit;
+
+  /* -------------------- PIPELINE -------------------- */
+
+  const pipeline = [
+
+    { $match: matchStage },
+
+    // 🔥 join category (optimized)
+    {
+      $lookup: {
+        from: "categories",
+        localField: "category",
+        foreignField: "_id",
+        pipeline: [
+          { $project: { name: 1 } } // ⚡ reduce data
+        ],
+        as: "category"
+      }
+    },
+    { $unwind: "$category" },
+
+    // 🔥 subject count (optimized)
+    {
+      $lookup: {
+        from: "subjects",
+        localField: "_id",
+        foreignField: "program",
+        pipeline: [
+          { $project: { _id: 1 } } // ⚡ lightweight
+        ],
+        as: "subjects"
+      }
+    },
+
+    {
+      $addFields: {
+        subjectCount: { $size: "$subjects" }
+      }
+    },
+
+    {
+      $project: {
+        name: 1,
+        description: 1,
+        icon: 1,
+        slug: 1,
+        createdAt: 1,
+        subjectCount: 1,
+        category: {
+          _id: "$category._id",
+          name: "$category.name"
+        }
+      }
+    },
+
+    // 🔥 better UX sorting
+    {
+      $sort: search
+        ? { name: 1 }
+        : { createdAt: -1 }
+    },
+
+    { $skip: skip },
+    { $limit: limit }
+  ];
+
+  const [programs, total] = await Promise.all([
+    Program.aggregate(pipeline),
+    Program.countDocuments(matchStage)
+  ]);
 
   return res.status(200).json(
-    new ApiResponse(200, programs, "Programs fetched successfully")
+    new ApiResponse(200, {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      programs
+    }, "Programs fetched")
+  );
+});
+
+
+/* -------------------- GET SINGLE -------------------- */
+
+export const getProgramById = asyncHandler(async (req, res) => {
+
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid program ID");
+  }
+
+  const query = { _id: id, isActive: true };
+
+  if (req.user?.role === "admin") {
+    delete query.isActive;
+  }
+
+  const program = await Program.findOne(query)
+    .populate("category", "name")
+    .lean();
+
+  if (!program) {
+    throw new ApiError(404, "Program not found");
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, program, "Program fetched")
+  );
+});
+
+
+/* -------------------- UPDATE -------------------- */
+
+export const updateProgram = asyncHandler(async (req, res) => {
+
+  const { id } = req.params;
+  const { name, description, icon } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid program ID");
+  }
+
+  const updateData = {};
+
+  if (name) {
+    const normalizedName = name.trim().toLowerCase();
+
+    const existing = await Program.findOne({
+      name: normalizedName,
+      _id: { $ne: id }
+    });
+
+    if (existing) {
+      throw new ApiError(409, "Program name already exists");
+    }
+
+    updateData.name = normalizedName;
+    updateData.slug = normalizedName.replace(/\s+/g, "-");
+  }
+
+  if (description !== undefined) updateData.description = description;
+  if (icon !== undefined) updateData.icon = icon;
+
+  const updated = await Program.findByIdAndUpdate(
+    id,
+    { $set: updateData },
+    { new: true, runValidators: true }
+  ).lean();
+
+  if (!updated) {
+    throw new ApiError(404, "Program not found");
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, updated, "Program updated")
+  );
+});
+
+
+/* -------------------- DELETE -------------------- */
+
+export const deleteProgram = asyncHandler(async (req, res) => {
+
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid program ID");
+  }
+
+  // ❗ prevent delete if subjects exist
+  const hasSubjects = await Subject.exists({ program: id });
+
+  if (hasSubjects) {
+    throw new ApiError(400, "Cannot delete program with subjects");
+  }
+
+  const deleted = await Program.findByIdAndUpdate(
+    id,
+    { isActive: false },
+    { new: true }
+  );
+
+  if (!deleted) {
+    throw new ApiError(404, "Program not found");
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, {}, "Program deleted")
   );
 });

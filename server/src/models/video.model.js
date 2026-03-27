@@ -2,106 +2,142 @@ import mongoose from "mongoose";
 
 const videoSchema = new mongoose.Schema(
 {
-	title: {
-		type: String,
-		required: true,
-		trim: true
-	},
+  title: {
+    type: String,
+    required: true,
+    trim: true,
+    index: true
+  },
 
-	description: {
-		type: String
-	},
+  description: {
+    type: String
+  },
 
-	program: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Program",
-		required: true
-	},
+  // 🔥 REQUIRED ROOT LEVEL
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    required: true,
+    index: true
+  },
 
-	subject: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Subject",
-		required: true
-	},
+  // 🔥 FLEXIBLE HIERARCHY (OPTIONAL)
+  program: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Program",
+    index: true
+  },
 
-	chapter: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Chapter"
-	},
+  subject: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Subject",
+    index: true
+  },
 
-	topic: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Topic"
-	},
+  chapter: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Chapter",
+    index: true
+  },
 
-	videoType: {
-		type: String,
-		enum: ["internal", "youtube"],
-		required: true
-	},
+  topic: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Topic",
+    index: true
+  },
 
-	videoUrl: {
-		type: String,
-		required: true
-	},
+  // 🎥 VIDEO TYPE
+  videoType: {
+    type: String,
+    enum: ["internal", "youtube"],
+    required: true
+  },
 
-	thumbnail: {
-		type: String
-	},
+  videoUrl: {
+    type: String,
+    required: true
+  },
 
-	duration: {
-		type: Number
-	},
+  // 📺 YOUTUBE SUPPORT
+  youtubeVideoId: {
+    type: String
+  },
 
-	uploadedBy: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
-		required: true
-	},
+  thumbnail: {
+    type: String
+  },
 
-	isFree: {
-		type: Boolean,
-		default: true
-	},
+  duration: {
+    type: Number,
+    default: 0
+  },
 
-	views: {
-		type: Number,
-		default: 0
-	},
+  uploadedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+    index: true
+  },
 
-	ratingAverage: {
-		type: Number,
-		default: 0
-	},
+  isFree: {
+    type: Boolean,
+    default: true
+  },
 
-	ratingCount: {
-		type: Number,
-		default: 0
-	}
+  // 📊 ANALYTICS
+  views: {
+    type: Number,
+    default: 0
+  },
+
+  ratingAverage: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 5
+  },
+
+  ratingCount: {
+    type: Number,
+    default: 0
+  }
 
 },
 { timestamps: true }
 );
 
-//
-// 🔹 SEARCH INDEX
-//
+
+// 🔍 FULL TEXT SEARCH
 videoSchema.index({ title: "text", description: "text" });
 
-//
-// 🔹 FILTERING INDEXES
-//
-videoSchema.index({ program: 1, subject: 1 });
-videoSchema.index({ subject: 1, chapter: 1 });
-videoSchema.index({ chapter: 1 });
-videoSchema.index({ topic: 1 });
 
-//
-// 🔹 SORTING INDEXES
-//
+// ⚡ MAIN FILTER INDEX (VERY IMPORTANT)
+videoSchema.index({
+  title: 1,
+  category: 1,
+  program: 1,
+  subject: 1,
+  chapter: 1,
+  topic: 1
+});
+
+
+// 📊 SORTING INDEXES
 videoSchema.index({ views: -1 });
 videoSchema.index({ ratingAverage: -1 });
 videoSchema.index({ createdAt: -1 });
+
+
+// 👨‍🏫 TEACHER DASHBOARD OPTIMIZATION
+videoSchema.index({ uploadedBy: 1, createdAt: -1 });
+
+
+// 🎯 YOUTUBE OPTIMIZED INDEX (ADVANCED)
+videoSchema.index(
+  { youtubeVideoId: 1 },
+  { partialFilterExpression: { videoType: "youtube" } }
+);
+
 
 const Video = mongoose.model("Video", videoSchema);
 
