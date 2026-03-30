@@ -1,40 +1,44 @@
 import mongoose from "mongoose";
 
-const watchHistorySchema = new mongoose.Schema(
-{
-	user: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
-		required: true
-	},
+const watchHistorySchema = new mongoose.Schema({
 
-	video: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Video",
-		required: true
-	},
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+    index: true
+  },
 
-	watchedSeconds: {
-		type: Number,
-		default: 0
-	},
+  video: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Video",
+    required: true,
+    index: true
+  },
 
-	completed: {
-		type: Boolean,
-		default: false
-	},
+  watchedSeconds: {
+    type: Number,
+    default: 0
+  },
 
-	lastWatchedAt: {
-		type: Date,
-		default: Date.now
-	}
+  completed: {
+    type: Boolean,
+    default: false
+  },
 
-},
-{ timestamps: true }
+  lastWatchedAt: {
+    type: Date,
+    default: Date.now,
+    index: true
+  }
+
+}, { timestamps: true });
+
+/* 🔥 ONE RECORD PER USER + VIDEO */
+watchHistorySchema.index(
+  { user: 1, video: 1 },
+  { unique: true }
 );
-
-// one user should have only one record per video
-watchHistorySchema.index({ user: 1, video: 1 }, { unique: true });
 
 const WatchHistory = mongoose.model("WatchHistory", watchHistorySchema);
 
