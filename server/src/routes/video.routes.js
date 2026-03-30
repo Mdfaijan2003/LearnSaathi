@@ -4,7 +4,8 @@ import {
   uploadVideo,
   getVideos,
   getVideoById,
-  searchVideos
+  searchVideos,
+  deleteVideo
 } from "../controllers/video.controller.js";
 
 import { verifyJWT } from "../middlewares/user.auth.middleware.js";
@@ -38,6 +39,13 @@ router.post(
   requireApprovedTeacher,
   upload.single("video"),   // for internal upload
   uploadVideo
+);
+
+router.delete(
+  "/delete/:id",
+  verifyJWT,
+  allowRoles("admin", "teacher"),
+  deleteVideo
 );
 
 

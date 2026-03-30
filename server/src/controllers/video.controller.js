@@ -10,6 +10,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadCloudinary } from "../utils/cloudinary.js";
+import { getYouTubeVideoDetails, parseDuration } from "../utils/youtube.js";
 
 
 /* -------------------- UTILITY: Extract YouTube ID -------------------- */
@@ -61,13 +62,12 @@ export const uploadVideo = asyncHandler(async (req, res) => {
     topic,
     videoType,
     youtubeUrl,
-    duration,
     isFree
   } = req.body;
-
+  let duration = 0;
   /* -------------------- BASIC VALIDATION -------------------- */
 
-  if (!title || !category || !videoType) {
+  if ( !category || !videoType) {
     throw new ApiError(400, "Title, category and videoType are required");
   }
 
@@ -155,6 +155,7 @@ export const uploadVideo = asyncHandler(async (req, res) => {
   let thumbnail = null;
 
   // 📺 YOUTUBE
+  // 📺 YOUTUBE
   if (videoType === "youtube") {
 
     if (!youtubeUrl) {
@@ -168,7 +169,23 @@ export const uploadVideo = asyncHandler(async (req, res) => {
     }
 
     videoUrl = `https://www.youtube.com/watch?v=${youtubeVideoId}`;
-    thumbnail = `https://img.youtube.com/vi/${youtubeVideoId}/hqdefault.jpg`;
+
+    try {
+      const ytData = await getYouTubeVideoDetails(youtubeVideoId);
+
+      // 🔥 AUTO DATA (FETCH ONCE)
+      duration = parseDuration(ytData.duration);
+
+      // optional override
+      if (!title) title = ytData.title;
+      thumbnail = ytData.thumbnail;
+
+    } catch (err) {
+      console.log("YouTube fetch failed:", err.message);
+
+      duration = 0;
+      thumbnail = `https://img.youtube.com/vi/${youtubeVideoId}/hqdefault.jpg`;
+    }
   }
 
   // 🎥 INTERNAL
@@ -187,6 +204,9 @@ export const uploadVideo = asyncHandler(async (req, res) => {
     }
 
     videoUrl = uploaded.url;
+    duration = uploaded.duration || 0;
+    thumbnail = uploaded.thumbnail || null;
+    
   }
 
   else {
@@ -545,3 +565,66 @@ export const searchVideos = asyncHandler(async (req, res) => {
   );
 });
 
+
+export const deleteVideo = asyncHandler(async (req, res) => {
+
+  const { id } = req.params;
+
+  /* -------------------- VALIDATION -------------------- */
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid video ID");
+  }
+
+  /* -------------------- FIND VIDEO -------------------- */
+
+  const video = await Video.findById(id);
+
+  if (!video) {
+    throw new ApiError(404, "Video not found");
+  }
+
+  /* -------------------- AUTHORIZATION -------------------- */
+
+  // Admin → can delete anything
+  // Teacher → only own videos
+  if (
+    req.user.role !== "admin" &&
+    video.uploadedBy.toString() !== req.user._id.toString()
+  ) {
+    throw new ApiError(403, "Not authorized to delete this video");
+  }
+
+  /* -------------------- DELETE FROM CLOUDINARY -------------------- */
+
+  // Only for internal videos
+  if (video.videoType === "internal" && video.videoUrl) {
+
+    try {
+      // extract public_id from URL
+      const parts = video.videoUrl.split("/");
+      const fileName = parts[parts.length - 1];
+      const publicId = fileName.split(".")[0];
+
+      // TODO: implement deleteCloudinary(publicId)
+      // await deleteCloudinary(publicId);
+
+    } catch (err) {
+      console.log("Cloudinary delete failed (safe to ignore)");
+    }
+  }
+
+  /* -------------------- DELETE DB -------------------- */
+
+  await Video.findByIdAndDelete(id);
+
+  /* -------------------- OPTIONAL: CLEAN REFERENCES -------------------- */
+
+  // If you later store videoIds in topics/chapters → remove here
+
+  /* -------------------- RESPONSE -------------------- */
+
+  return res.status(200).json(
+    new ApiResponse(200, {}, "Video deleted successfully")
+  );
+});
