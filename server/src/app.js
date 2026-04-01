@@ -19,7 +19,7 @@ import watchHistoryRoutes from "./routes/watchHistory.routes.js";
 import { startRecommendationCron } from "./cron/recommendation.cron.js";
 import commentRoutes from "./routes/comment.routes.js";
 import ratingRoutes from "./routes/rating.routes.js";
-import noteRoutes from "./routes/note.routes.js";
+import noteRoutes from "./routes/teacherNote.routes.js";
 import userNoteRoutes from "./routes/userNote.routes.js";
 import questionRoutes from "./routes/question.routes.js";
 import attemptRoutes from "./routes/attempt.routes.js";

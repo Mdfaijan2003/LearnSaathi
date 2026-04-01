@@ -35,7 +35,8 @@ export const upload = multer({
       "image/jpeg",
       "image/png",
       "image/webp",
-      "video/mp4"
+      "video/mp4",
+      "application/pdf"
     ];
 
     if (allowedTypes.includes(file.mimetype)) {
