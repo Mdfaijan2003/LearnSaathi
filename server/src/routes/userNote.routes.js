@@ -1,35 +1,26 @@
 import express from "express";
 import {
-  createUserNote,
-  getMyNotes,
-  getMyNotesByTopic,
-  updateUserNote,
-  deleteUserNote
+  createNote,
+  getNotes,
+  getNoteById,
+  updateNote,
+  deleteNote
 } from "../controllers/userNote.controller.js";
 
 import { verifyJWT } from "../middlewares/user.auth.middleware.js";
 
 const router = express.Router();
 
+/* 🔐 Protected */
 
-// create note
-router.post("/", verifyJWT, createUserNote);
+router.post("/createNote", verifyJWT, createNote);
 
+router.get("/myNotes", verifyJWT, getNotes);
 
-// get my notes
-router.get("/my", verifyJWT, getMyNotes);
+router.get("/note/:id", verifyJWT, getNoteById);
 
+router.patch("/updateNote/:id", verifyJWT, updateNote);
 
-// notes for specific topic
-router.get("/topic/:topicId", verifyJWT, getMyNotesByTopic);
-
-
-// update note
-router.patch("/:noteId", verifyJWT, updateUserNote);
-
-
-// delete note
-router.delete("/:noteId", verifyJWT, deleteUserNote);
-
+router.delete("/deleteNote/:id", verifyJWT, deleteNote);
 
 export default router;
