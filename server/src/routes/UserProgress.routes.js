@@ -1,18 +1,16 @@
 import express from "express";
 import {
-  markTopicComplete,
+  updateProgress,
   getTopicProgress,
-  getUserProgress
-} from "../controllers/progress.controller.js";
+  continueWatching
+} from "../controllers/UserProgress.controller.js";
 
 import { verifyJWT } from "../middlewares/user.auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/topic", verifyJWT, markTopicComplete);
-
+router.post("/update", verifyJWT, updateProgress);
 router.get("/topic/:topicId", verifyJWT, getTopicProgress);
-
-router.get("/me", verifyJWT, getUserProgress);
+router.get("/continue", verifyJWT, continueWatching);
 
 export default router;

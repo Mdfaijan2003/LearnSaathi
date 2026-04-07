@@ -25,7 +25,7 @@ import questionRoutes from "./routes/question.routes.js";
 import practiceRoutes from "./routes/practice.routes.js";
 import attemptRoutes from "./routes/attempt.routes.js";
 import testRoutes from "./routes/test.routes.js";
-import progressRoutes from "./routes/progress.routes.js";
+import progressRoutes from "./routes/UserProgress.routes.js";
 import bookmarkRoutes from "./routes/bookmark.routes.js";
 import courseRoutes from "./routes/course.routes.js";
 import courseModuleRoutes from "./routes/courseModule.routes.js";
