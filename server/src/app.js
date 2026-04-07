@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import cookiieParser from "cookie-parser";
+// import passport from "passport";
+import passport from "./config/passport.js";
 
 
 import authRoutes from "./routes/user.auth.routes.js";
@@ -15,7 +17,8 @@ app.use(express.json({limit: "10mb"}));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(express.static("Public"));
 app.use(cookiieParser());
+app.use(passport.initialize());
 
-app.use("/api/v1/users", authRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 export { app };
