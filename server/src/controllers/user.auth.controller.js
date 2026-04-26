@@ -168,6 +168,8 @@ export const changeCurrentPassword = asyncHandler(async (req, res) => {
   user.password = newPassword;
 
   await user.save();
+  // await user.setPassword(newPassword);
+  // await user.save({ validateBeforeSave: false });
 
   return res.status(200).json(
     new ApiResponse(200, {}, "Password changed successfully")
@@ -379,7 +381,7 @@ export const googleLoginSuccess = asyncHandler(async (req, res) => {
   const ip = req.ip;
 
   // 🔥 limit sessions
-  if (user.sessions.length >= 2) {
+  if (user.sessions.length >= 5) {
     user.sessions.shift();
   }
 

@@ -1,5 +1,6 @@
 import OTP from "../models/otp.model.js";
 import User from "../models/user.model.js";
+import crypto from "crypto";
 import { verifyOtpService } from "../services/auth.service.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -35,17 +36,30 @@ export const resendOtp = asyncHandler(async(req,res)=>{
 
   const expires = new Date(Date.now() + 5*60*1000);
 
+  // await OTP.deleteMany({
+  //   $or:[{email},{phoneNumber}],
+  //   purpose
+  // });
+
+  const conditions = [];
+
+  if (email) conditions.push({ email });
+  if (phoneNumber) conditions.push({ phoneNumber });
+
   await OTP.deleteMany({
-    $or:[{email},{phoneNumber}],
+    $or: conditions,
     purpose
   });
+
+  const hash = (value) =>
+    crypto.createHash("sha256").update(value).digest("hex");
 
   await OTP.create({
     email,
     phoneNumber,
-    otp,
+    otp: hash(otp),
     purpose,
-    expiresAt:expires
+    expiresAt: expires
   });
 
   console.log("Resend OTP:",otp);

@@ -3,6 +3,7 @@ import OTP from "../models/otp.model.js";
 import { generateOtp } from "../utils/generateOtp.js";
 import { ApiError } from "../utils/ApiError.js";
 import { redisClient } from "../utils/redis.js";
+import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
@@ -15,22 +16,39 @@ export const registerService = async (data) => {
   const { username, email, password, fullName, phoneNumber, role } = data;
 
   if (
-    [username, email, password, fullName]
-      .some((field) => typeof field === "string" && field.trim() === "")
+    !username?.trim() ||
+    !password?.trim() ||
+    !fullName?.trim() ||
+    (!email?.trim() && !phoneNumber?.trim())
   ) {
     throw new ApiError(400, "All required fields must be filled");
   }
 
   const key = `otp:${email || phoneNumber}`;
 
-  const exists = await redisClient.get(key);
+  // const exists = await redisClient.get(key);
+  let exists = null;
+
+  try {
+    exists = await redisClient.get(key);
+  } catch (err) {
+    console.log("Redis error, skipping rate limit");
+  }
+
   if (exists) {
     throw new ApiError(429, "Please wait before requesting OTP again");
   }
+  // const existingUser = await User.findOne({
+  //   $or: [{ email: tempUser.email }, { phoneNumber: tempUser.phoneNumber }]
+  // });
 
-  const existedUser = await User.findOne({
-    $or: [{ username }, { email }, { phoneNumber }]
-  });
+  const conditions = [];
+
+  if (username) conditions.push({ username });
+  if (email) conditions.push({ email });
+  if (phoneNumber) conditions.push({ phoneNumber });
+
+  const existedUser = await User.findOne({ $or: conditions });
 
   if (existedUser) {
     throw new ApiError(409, "User already exists");
@@ -101,14 +119,20 @@ export const verifyOtpService = async (data) => {
 
   const tempUser = otpDoc.tempUser;
 
-  const existingUser = await User.findOne({
-    $or: [{ email: tempUser.email }, { phoneNumber: tempUser.phoneNumber }]
-  });
+  // const existingUser = await User.findOne({
+  //   $or: [{ email: tempUser.email }, { phoneNumber: tempUser.phoneNumber }]
+  // });
+  const conditions = [];
+
+  if (tempUser.email) conditions.push({ email: tempUser.email });
+  if (tempUser.phoneNumber) conditions.push({ phoneNumber: tempUser.phoneNumber });
+
+  const existingUser = await User.findOne({ $or: conditions });
 
   if (existingUser) {
     throw new ApiError(409, "User already exists");
   }
-
+  console.log("TEMP USER PASSWORD:", tempUser.password);
   await User.create({
     ...tempUser,
     teacherStatus:
@@ -129,9 +153,20 @@ export const forgotPasswordService = async ({ email, phoneNumber }) => {
     throw new ApiError(400, "Email or phone required");
   }
 
-  const user = await User.findOne({
-    $or: [{ email }, { phoneNumber }]
-  });
+  // const user = await User.findOne({
+  //   $or: [{ email }, { phoneNumber }]
+  // });
+
+  const conditions = [];
+
+  if (email) conditions.push({ email });
+  if (phoneNumber) conditions.push({ phoneNumber });
+
+  if (conditions.length !== 1) {
+    throw new ApiError(400, "Provide either email OR phone number");
+  }
+
+  const user = await User.findOne(conditions[0]);
 
   if (!user) throw new ApiError(404, "User not found");
 
@@ -170,14 +205,27 @@ export const resetPasswordService = async ({email, phoneNumber, otp, newPassword
     throw new ApiError(400, "OTP expired");
   }
 
-  const user = await User.findOne({
-    $or: [{ email }, { phoneNumber }]
-  }).select("+password");
+  const conditions = [];
+
+  if (email) conditions.push({ email });
+  if (phoneNumber) conditions.push({ phoneNumber });
+
+  if (conditions.length !== 1) {
+    throw new ApiError(400, "Provide either email OR phone number");
+  }
+
+  const user = await User.findOne(conditions[0]).select("+password");
+  console.log("RESET USER ID:", user?._id);
+  console.log("RESET EMAIL:", user?.email);
+  console.log("RESET HASH:", user?.password);
 
   if (!user) throw new ApiError(404, "User not found");
 
   user.password = newPassword;
-  await user.save();
+  // await user.setPassword(newPassword);
+  console.log("AFTER SET HASH:", user.password);
+  await user.save({ validateBeforeSave: false });
+  console.log("AFTER SAVE HASH:", user.password);
 
   otpDoc.isUsed = true;
   await otpDoc.save();
@@ -201,13 +249,29 @@ export const loginService = async ({
     throw new ApiError(401, "Password is required");
   }
 
-  const user = await User.findOne({
-    $or: [{ email }, { phoneNumber }]
-  }).select("+password +sessions");
+  const conditions = [];
+
+  if (email) conditions.push({ email });
+  if (phoneNumber) conditions.push({ phoneNumber });
+
+  if (conditions.length !== 1) {
+    throw new ApiError(400, "Provide either email OR phone number");
+  }
+
+  const user = await User.findOne(conditions[0])
+    .select("+password +sessions");
+  console.log("LOGIN USER ID:", user?._id);
+  console.log("LOGIN EMAIL:", user?.email);
+  console.log("LOGIN HASH:", user?.password);
 
   if (!user) throw new ApiError(404, "User not found");
+  console.log("User password", password);
+  console.log("Hashed password", user.password);
 
   const isValid = await user.isPasswordCorrect(password);
+  console.log("Entered password length:", password.length);
+  console.log("Hashed password length:", user.password.length);
+  console.log("Password match:", isValid);
   if (!isValid) throw new ApiError(401, "Invalid password");
 
   const accessToken = user.generateAccessToken();
