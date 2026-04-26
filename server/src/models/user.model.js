@@ -135,11 +135,11 @@ userSchema.index({ email: 1, authProvider: 1 });
 
 /* ================= PASSWORD HASH ================= */
 
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return ;
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
 
+  console.log("save password:", this.password);
   this.password = await bcrypt.hash(this.password, 12);
-  // next();
 });
 
 
@@ -148,8 +148,18 @@ userSchema.pre("save", async function (next) {
 
 // password check
 userSchema.methods.isPasswordCorrect = async function (password) {
-  return await bcrypt.compare(password, this.password);
+  console.log("Entered password: ", password);
+  // console.log("Entered hashed password: ", hash(password));
+  console.log("Stored password: ", this.password);
+  const result = await bcrypt.compare(password, this.password);
+  console.log("Password match: ", result);
+  return result;
 };
+
+// userSchema.methods.setPassword = async function (password) {
+//   const salt = await bcrypt.genSalt(12);
+//   this.password = await bcrypt.hash(password, salt);
+// };
 
 // access token
 userSchema.methods.generateAccessToken = function () {

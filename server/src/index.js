@@ -14,7 +14,7 @@ import { connectRedis } from "./utils/redis.js";
 // dotenv.config({
 //   path: "../.env",
 // });
-console.log("Hello, Server is starting...");
+// console.log("Hello, Server is starting...");
 
 const startServer = async () => {
   try {
