@@ -8,6 +8,7 @@ import connectDB from "./db/db.js";
 import { app } from "./app.js";
 import { createMasterAdmin } from "./utils/createMasterAdmin.js";
 import { connectRedis } from "./utils/redis.js";
+import { startRecommendationCron } from "./cron/recommendation.cron.js";
 
  // 🔥 VERY IMPORTANT
 
@@ -23,7 +24,8 @@ const startServer = async () => {
     await createMasterAdmin();
 
     await connectRedis();
-
+    startRecommendationCron();
+    
     app.listen(process.env.PORT || 5000, () => {
       console.log(`🚀 Server running on port ${process.env.PORT}`);
     });

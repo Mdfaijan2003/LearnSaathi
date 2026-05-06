@@ -12,7 +12,7 @@ import subjectRoutes from "./routes/subject.routes.js";
 import chapterRoutes from "./routes/chapter.routes.js";
 import topicRoutes from "./routes/topic.routes.js";
 import videoRoutes from "./routes/video.routes.js";
-
+import watchHistoryRoutes from "./routes/watchHistory.routes.js";
 const app = express();
 
 app.use(cors({
@@ -39,4 +39,7 @@ app.use("/api/v1/subjects", subjectRoutes);
 app.use("/api/v1/chapters", chapterRoutes);
 app.use("/api/v1/topics", topicRoutes);
 app.use("/api/v1/videos", videoRoutes);
+app.use("/api/v1/watch-history", watchHistoryRoutes);
+// startRecommendationCron();
+
 export { app };
