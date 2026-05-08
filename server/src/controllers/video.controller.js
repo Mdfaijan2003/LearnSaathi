@@ -13,6 +13,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
 import { getYouTubeVideoDetails, parseDuration } from "../utils/youtube.js";
+import { getPublicId } from "../utils/cloudinaryHelpers.js";
 
 
 /* -------------------- UTILITY: Extract YouTube ID -------------------- */
@@ -722,6 +723,7 @@ export const deleteVideo = asyncHandler(async (req, res) => {
 
   if (
     req.user.role !== "admin" &&
+    !(req.user.role === "teacher" && req.user.teacherStatus === "approved") &&
     video.uploadedBy.toString() !== req.user._id.toString()
   ) {
     throw new ApiError(403, "Not authorized to delete this video");
@@ -732,9 +734,16 @@ export const deleteVideo = asyncHandler(async (req, res) => {
   if (video.videoType === "internal" && video.videoUrl) {
     try {
       // 🔥 safer public_id extraction
-      const urlParts = video.videoUrl.split("/");
-      const fileWithExt = urlParts[urlParts.length - 1];
-      const publicId = fileWithExt.substring(0, fileWithExt.lastIndexOf("."));
+      // const urlParts = video.videoUrl.split("/");
+      // const fileWithExt = urlParts[urlParts.length - 1];
+      // const publicId = fileWithExt.substring(0, fileWithExt.lastIndexOf("."));
+      const publicId = getPublicId(video.videoUrl);
+      await deleteFromCloudinary(publicId, "video");
+
+      if (video.thumbnail) {
+        const thumbPublicId = getPublicId(video.thumbnail);
+        await deleteFromCloudinary(thumbPublicId, "image");
+      }
 
       // 👉 implement this util properly
       // await deleteCloudinary(publicId);
