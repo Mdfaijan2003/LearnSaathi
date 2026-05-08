@@ -9,43 +9,60 @@ import {
 } from "../controllers/video.controller.js";
 
 import { verifyJWT } from "../middlewares/user.auth.middleware.js";
+
 import { allowRoles } from "../middlewares/role.middleware.js";
+
 import { requireApprovedTeacher } from "../middlewares/teacher.middleware.js";
 
-import { upload } from "../middlewares/multer.middleware.js";
+import { uploadCourseVideo } from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
 
-/* -------------------- PUBLIC ROUTES -------------------- */
+/* =====================================================
+   PUBLIC ROUTES
+===================================================== */
 
-// 🔥 Get all videos (filter + pagination + sorting)
-router.get("/view/", getVideos);
+// 🎥 Get all videos
+router.get(
+  "/",
+  getVideos
+);
 
 // 🔍 Search videos
-router.get("/search", searchVideos);
+router.get(
+  "/search",
+  searchVideos
+);
 
-// 📺 Get single video + related + increment views
-router.get("/view/:id", getVideoById);
+// 📺 Get single video
+router.get(
+  "/:id",
+  getVideoById
+);
 
 
-/* -------------------- PROTECTED ROUTES -------------------- */
+/* =====================================================
+   PROTECTED ROUTES
+===================================================== */
 
-// 🎥 Upload video (teacher/admin only)
+// 🎬 Upload video
 router.post(
   "/upload",
   verifyJWT,
   allowRoles("teacher", "admin"),
   requireApprovedTeacher,
-  upload.fields([
+  uploadCourseVideo.fields([
     { name: "video", maxCount: 1 },
-    { name: "thumbnail", maxCount: 1 },
-  ]),   // for internal upload
+    { name: "thumbnail", maxCount: 1 }
+  ]),
   uploadVideo
 );
 
+
+// ❌ Delete video
 router.delete(
-  "/delete/:id",
+  "/:id",
   verifyJWT,
   allowRoles("admin", "teacher"),
   deleteVideo

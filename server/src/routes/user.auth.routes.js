@@ -1,5 +1,7 @@
 import express from "express";
+
 import {
+
   registerUser,
   loginUser,
   logoutUser,
@@ -15,66 +17,136 @@ import {
   updateAvatar,
   updateCoverImage,
   googleLoginSuccess
+
 } from "../controllers/user.auth.controller.js";
 
-import { verifyOtp, resendOtp } from "../controllers/otp.controller.js";
+import {
+  verifyOtp,
+  resendOtp
+} from "../controllers/otp.controller.js";
 
 import { verifyJWT } from "../middlewares/user.auth.middleware.js";
-import { upload } from "../middlewares/multer.middleware.js";
+
+import { uploadImage } from "../middlewares/multer.middleware.js";
+
 import passport from "passport";
 
 const router = express.Router();
 
-/* ================= AUTH ================= */
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.post("/logout", verifyJWT, logoutUser);
-router.post("/refresh-token", refreshAccessToken);
+/* =====================================================
+   AUTH
+===================================================== */
 
-/* ================= OTP ================= */
+router.post(
+  "/register",
+  registerUser
+);
 
-router.post("/verify-otp", verifyOtp);
-router.post("/resend-otp", resendOtp);
+router.post(
+  "/login",
+  loginUser
+);
 
-/* ================= PASSWORD ================= */
+router.post(
+  "/logout",
+  verifyJWT,
+  logoutUser
+);
 
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password", resetPassword);
+router.post(
+  "/refresh-token",
+  refreshAccessToken
+);
 
-/* ================= USER ================= */
 
-router.get("/me", verifyJWT, getCurrentUser);
-router.post("/change-password", verifyJWT, changeCurrentPassword);
-router.patch("/update-account", verifyJWT, updateAccountDetails);
+/* =====================================================
+   OTP
+===================================================== */
 
-/* ================= MEDIA ================= */
+router.post(
+  "/verify-otp",
+  verifyOtp
+);
+
+router.post(
+  "/resend-otp",
+  resendOtp
+);
+
+
+/* =====================================================
+   PASSWORD
+===================================================== */
+
+router.post(
+  "/forgot-password",
+  forgotPassword
+);
+
+router.post(
+  "/reset-password",
+  resetPassword
+);
+
+
+/* =====================================================
+   USER
+===================================================== */
+
+router.get(
+  "/me",
+  verifyJWT,
+  getCurrentUser
+);
+
+router.post(
+  "/change-password",
+  verifyJWT,
+  changeCurrentPassword
+);
+
+router.patch(
+  "/update-account",
+  verifyJWT,
+  updateAccountDetails
+);
+
+
+/* =====================================================
+   AVATAR
+===================================================== */
 
 router.post(
   "/upload-avatar",
   verifyJWT,
-  upload.single("avatar"),
+  uploadImage.single("avatar"),
   uploadAvatar
 );
 
 router.patch(
   "/update-avatar",
   verifyJWT,
-  upload.single("avatar"),
+  uploadImage.single("avatar"),
   updateAvatar
 );
+
+
+/* =====================================================
+   COVER IMAGE
+===================================================== */
 
 router.post(
   "/upload-cover-image",
   verifyJWT,
-  upload.single("coverImage"),
+  uploadImage.single("coverImage"),
   uploadCoverImage
 );
 
 router.patch(
   "/update-cover-image",
   verifyJWT,
-  upload.single("coverImage"),
+  uploadImage.single("coverImage"),
   updateCoverImage
 );
 
@@ -84,7 +156,10 @@ router.delete(
   deleteCoverImage
 );
 
-/* ================= GOOGLE AUTH ================= */
+
+/* =====================================================
+   GOOGLE AUTH
+===================================================== */
 
 router.get(
   "/google",
