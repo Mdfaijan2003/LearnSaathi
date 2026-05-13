@@ -13,7 +13,12 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
       minlength: 3,
-      maxlength: 30
+      maxlength: 30,
+
+      match: [
+        /^[a-zA-Z0-9_]+$/,
+        "Invalid username"
+      ]
     },
 
     fullName: {
@@ -29,7 +34,12 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      index: true
+      index: true,
+
+      match: [
+        /^\S+@\S+\.\S+$/,
+        "Invalid email format"
+      ]
     },
 
     phoneNumber: {
@@ -37,7 +47,18 @@ const userSchema = new mongoose.Schema(
       unique: true,
       sparse: true, // ✅ allows multiple users without phone
       trim: true,
-      default: undefined
+      default: undefined,
+
+      match: [
+        /^[0-9]{10,15}$/,
+        "Invalid phone number"
+      ]
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true,
+      index: true
     },
 
     /* ================= MEDIA ================= */

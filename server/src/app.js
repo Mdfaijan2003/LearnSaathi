@@ -6,6 +6,7 @@ import passport from "./config/passport.js";
 
 
 import authRoutes from "./routes/user.auth.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
 import ProgramRoutes from "./routes/program.routes.js";
 import subjectRoutes from "./routes/subject.routes.js";
@@ -15,6 +16,9 @@ import videoRoutes from "./routes/video.routes.js";
 import watchHistoryRoutes from "./routes/watchHistory.routes.js";
 import OfficialNoteRoutes from "./routes/officialNote.routes.js";
 import studentNoteRoutes from "./routes/studentNote.routes.js";
+import questionRoutes from "./routes/question.routes.js";
+import quizRoutes from "./routes/quiz.routes.js";
+import quizAttemptRoutes from "./routes/quizAttempt.routes.js";
 const app = express();
 
 app.use(cors({
@@ -35,6 +39,7 @@ app.use(cookieParser());
 app.use(passport.initialize());
 
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/programs", ProgramRoutes);
 app.use("/api/v1/subjects", subjectRoutes);
@@ -44,6 +49,9 @@ app.use("/api/v1/videos", videoRoutes);
 app.use("/api/v1/watch-history", watchHistoryRoutes);
 app.use("/api/v1/official-notes", OfficialNoteRoutes);
 app.use("/api/v1/student-notes", studentNoteRoutes);
+app.use("/api/v1/questions", questionRoutes);
+app.use("/api/v1/quizzes", quizRoutes);
+app.use("/api/v1/quiz-attempts", quizAttemptRoutes);
 // startRecommendationCron();
 
 export { app };
